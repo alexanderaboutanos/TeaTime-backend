@@ -5,7 +5,7 @@
 const express = require("express");
 const cors = require("cors");
 
-// const { NotFoundError } = require("./expressError")
+const { NotFoundError } = require("./expressError");
 // const {authenticateJWT} = require ("./middleware/auth")
 // const authRoutes = require("./routes/auth")
 // const teasRoutes = require("./routes/teas")
@@ -23,9 +23,9 @@ app.use(morgan("tiny"));
 // app.use("/teas", teasRoutes)
 
 /** Handle 404 errors */
-// app.use(function (req, res, next) {
-//   return next(new NotFoundError());
-// });
+app.use(function (req, res, next) {
+  return next(new NotFoundError());
+});
 
 /** Generic error handler; anything unhandled goes here */
 app.use(function (err, req, res, next) {

@@ -4,6 +4,11 @@
 
 const express = require("express");
 const router = express.Router();
+
+router.get("/", async function (req, res, next) {
+  res.send("hello teas");
+});
+
 module.exports = router;
 
 // const jsonschema = require("jsonschema");

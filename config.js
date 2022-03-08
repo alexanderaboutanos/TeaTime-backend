@@ -10,8 +10,8 @@ const PORT = +process.env.PORT || 3001;
 /** Use development database, testing database, or via env var, production database */
 function getDatabaseUri() {
   return process.env.NODE_ENV === "test"
-    ? "teaTime_test"
-    : process.env.DATABASE_URL || "teaTime";
+    ? "tea_time_test"
+    : process.env.DATABASE_URL || "tea_time";
 }
 
 /** Speed up bcrypt during tests */

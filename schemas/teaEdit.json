@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-01/schema#",
+  "$id": "http://teaTime.com/teaEdit.json",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "brand": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string"
+    },
+    "review": {
+      "type": "string"
+    },
+    "country_of_origin": {
+      "type": "string"
+    },
+    "organic": {
+      "type": "boolean"
+    },
+    "imgURL": {
+      "type": "string",
+      "format": "uri"
+    },
+    "brew_time": {
+      "type": "integer"
+    },
+    "brew_temp": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

@@ -15,6 +15,24 @@ const teaNewSchema = require("../schemas/teaNew.json");
 const { BadRequestError } = require("../expressError");
 const ensureLoggedIn = require("../middleware/auth");
 
+/** GET /[id]  =>  { tea }
+ *
+ * Get information about a tea with just the id
+ *
+ *  Tea is { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
+ *
+ * Authorization required: loggedIn
+ */
+
+router.get("/:id", async function (req, res, next) {
+  try {
+    const tea = await Tea.get(req.params.id);
+    return res.json({ tea });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /** POST / { tea } =>  { tea }
  *
  * CREATES NEW TEA
@@ -23,7 +41,7 @@ const ensureLoggedIn = require("../middleware/auth");
  *
  * Returns { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
  *
- * Authorization required: user
+ * Authorization required: loggedIn
  */
 
 router.post("/new", async function (req, res, next) {

@@ -1,10 +1,37 @@
 /** @format */
 
 const db = require("../db");
-// const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError } = require("../expressError");
 
 class Tea {
-  /** Create a tea (from data), update db, return new tea data.
+  /**
+   *
+   * GET TEA
+   *
+   * Given a tea_id, return data about tea.
+   *
+   * Returns { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
+   *
+   * Throws NotFoundError if not found.
+   **/
+
+  static async get(id) {
+    const teaRes = await db.query(
+      `SELECT *
+         FROM teas
+         WHERE id = $1`,
+      [id]
+    );
+    const tea = teaRes.rows[0];
+    if (!tea) throw new NotFoundError(`No tea with ID#: ${id}`);
+    return tea;
+  }
+
+  /**
+   *
+   * CREATE TEA
+   *
+   * Create a tea (from data), update db, return new tea data.
    *
    * data should be { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
    *

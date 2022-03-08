@@ -27,7 +27,7 @@
     "organic": {
       "type": "boolean"
     },
-    "imgURL": {
+    "img_url": {
       "type": "string",
       "format": "uri"
     },

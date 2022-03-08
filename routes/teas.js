@@ -17,6 +17,8 @@ const ensureLoggedIn = require("../middleware/auth");
 
 /** GET /[id]  =>  { tea }
  *
+ * GET TEA DATA
+ *
  * Get information about a tea with just the id
  *
  *  Tea is { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
@@ -53,7 +55,24 @@ router.post("/new", async function (req, res, next) {
     }
 
     const tea = await Tea.create(req.body);
+    // STILL NEED TO ADD THIS TEA
     return res.status(201).json({ tea });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** DELETE /[id]  =>  { deleted: id }
+ *
+ * DELETES TEA
+ *
+ * Authorization: EnsureOwnerOfTea(wishList or myTea)
+ */
+
+router.delete("/:id", async function (req, res, next) {
+  try {
+    await Tea.remove(req.params.id);
+    return res.json({ deleted: req.params.id });
   } catch (err) {
     return next(err);
   }

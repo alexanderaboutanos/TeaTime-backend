@@ -23,7 +23,7 @@ class Tea {
       [id]
     );
     const tea = teaRes.rows[0];
-    if (!tea) throw new NotFoundError(`No tea with ID#: ${id}`);
+    if (!tea) throw new NotFoundError(`No tea with id#: ${id}`);
     return tea;
   }
 
@@ -91,6 +91,27 @@ class Tea {
     const tea = result.rows[0];
 
     return tea;
+  }
+
+  /**
+   *
+   * DELETE TEA
+   *
+   * Delete given tea from database; returns undefined.
+   *
+   * Throws NotFoundError if tea not found.
+   **/
+
+  static async remove(id) {
+    const result = await db.query(
+      `DELETE
+           FROM teas
+           WHERE id = $1
+           RETURNING id`,
+      [id]
+    );
+    const tea = result.rows[0];
+    if (!tea) throw new NotFoundError(`No tea with id#: ${id}`);
   }
 }
 

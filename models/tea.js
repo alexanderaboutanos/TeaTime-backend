@@ -1,7 +1,8 @@
 /** @format */
 
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { NotFoundError } = require("../expressError");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Tea {
   /**
@@ -89,6 +90,34 @@ class Tea {
       ]
     );
     const tea = result.rows[0];
+
+    return tea;
+  }
+
+  /** Update tea data with `data`.
+   *
+   * This is a "partial update" --- it's fine if data doesn't contain
+   * all the fields; this only changes provided ones.
+   *
+   * Data can include: { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
+   *
+   * Returns { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
+   *
+   * Throws NotFoundError if not found.
+   */
+
+  static async update(id, data) {
+    const { setCols, values } = sqlForPartialUpdate(data, {});
+    const idVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE teas 
+                      SET ${setCols} 
+                      WHERE id = ${idVarIdx} 
+                      RETURNING title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp`;
+    const result = await db.query(querySql, [...values, id]);
+    const tea = result.rows[0];
+
+    if (!tea) throw new NotFoundError(`No tea: ${id}`);
 
     return tea;
   }

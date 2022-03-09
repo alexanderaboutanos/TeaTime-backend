@@ -9,7 +9,7 @@ const Tea = require("../models/tea");
 
 const jsonschema = require("jsonschema");
 const teaNewSchema = require("../schemas/teaNew.json");
-// const teaUpdateSchema = require("../schemas/teaUpdate.json");
+const teaEditSchema = require("../schemas/teaEdit.json");
 
 const { BadRequestError } = require("../expressError");
 const ensureLoggedIn = require("../middleware/auth");
@@ -55,6 +55,30 @@ router.post("/new", async function (req, res, next) {
 
     const tea = await Tea.create(req.body);
     return res.status(201).json({ tea });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** PATCH /[teaId]  { fld1, fld2, ... } => { tea }
+ *
+ * Data can include: title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp
+ *
+ * Returns { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
+ *
+ * Authorization required: personalUser
+ */
+
+router.patch("/:id", async function (req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, teaEditSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const tea = await Tea.update(req.params.id, req.body);
+    return res.json({ tea });
   } catch (err) {
     return next(err);
   }

@@ -36,8 +36,14 @@
     },
     "brew_temp": {
       "type": "integer"
+    },
+    "is_my_tea": {
+      "type": "boolean"
+    },
+    "is_wish_list": {
+      "type": "boolean"
     }
   },
   "additionalProperties": false,
-  "required": ["title", "brand", "description"]
+  "required": ["title", "brand", "description", "is_my_tea", "is_wish_list"]
 }

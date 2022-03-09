@@ -18,16 +18,18 @@ class User {
   static async authenticate(username, password) {
     // try to find the user first
     const result = await db.query(
-      `SELECT username,
-                  password,
-                  first_name AS "firstName",
-                  last_name AS "lastName"
+      `SELECT id, 
+              username,
+              password,
+              first_name AS "firstName",
+              last_name AS "lastName"
            FROM users
            WHERE username = $1`,
       [username]
     );
 
     const user = result.rows[0];
+    user.teaIdArr = await User.getMyTeas(user.id);
 
     if (user) {
       // compare hashed password to a new hash from password
@@ -37,6 +39,8 @@ class User {
         return user;
       }
     }
+
+    // returns SQL data with array of teas.
 
     throw new UnauthorizedError("Invalid username/password");
   }
@@ -69,13 +73,26 @@ class User {
           first_name,
           last_name)
          VALUES ($1, $2, $3, $4)
-         RETURNING username, first_name AS "firstName", last_name AS "lastName"`,
+         RETURNING id, username, first_name AS "firstName", last_name AS "lastName"`,
       [username, hashedPassword, firstName, lastName]
     );
 
     const user = result.rows[0];
 
+    user.teaIdArr = await User.getMyTeas(user.id);
+
     return user;
+  }
+
+  static async getMyTeas(userId) {
+    const result = await db.query(
+      `SELECT tea_id
+         FROM saved_teas
+         WHERE user_id = $1`,
+      [userId]
+    );
+    const teaIdArr = result.rows.map((r) => r.tea_id);
+    return teaIdArr;
   }
 }
 

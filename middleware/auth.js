@@ -1,6 +1,29 @@
 /** @format */
 
+const jwt = require("jsonwebtoken");
+const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
+
+/** Middleware: Authenticate user.
+ *
+ * If a token was provided, verify it, and, if valid, store the token payload
+ * on res.locals (this will include the username.)
+ *
+ * It's not an error if no token was provided or if the token is not valid.
+ */
+
+function authenticateJWT(req, res, next) {
+  try {
+    const authHeader = req.headers && req.headers.authorization;
+    if (authHeader) {
+      const token = authHeader.replace(/^[Bb]earer /, "").trim();
+      res.locals.user = jwt.verify(token, SECRET_KEY);
+    }
+    return next();
+  } catch (err) {
+    return next();
+  }
+}
 
 /** Middleware to use when they must be logged in.
  *
@@ -9,7 +32,9 @@ const { UnauthorizedError } = require("../expressError");
 
 function ensureLoggedIn(req, res, next) {
   try {
-    if (!res.locals.user) throw new UnauthorizedError();
+    if (!res.locals.user) {
+      throw new UnauthorizedError();
+    }
     return next();
   } catch (err) {
     return next(err);
@@ -22,10 +47,11 @@ function ensureLoggedIn(req, res, next) {
  *  If not, raises Unauthorized.
  */
 
-function ensureCorrectUser(req, res, next) {
+function ensureTeaOwner(req, res, next) {
   try {
     const user = res.locals.user;
-    if (!(user && user.username === req.params.username)) {
+    const teaId = req.body.teaId || req.params.teaId;
+    if (!(user && user.teaIdArr.indexOf(parseInt(teaId)) !== -1)) {
       throw new UnauthorizedError();
     }
     return next();
@@ -34,4 +60,4 @@ function ensureCorrectUser(req, res, next) {
   }
 }
 
-module.exports = { ensureLoggedIn, ensureCorrectUser };
+module.exports = { ensureLoggedIn, ensureTeaOwner, authenticateJWT };

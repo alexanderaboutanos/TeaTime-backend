@@ -7,7 +7,7 @@ const router = express.Router();
 
 const Saved = require("../models/saved");
 
-// const ensureLoggedIn = require("../middleware/auth");
+const { ensureTeaOwner } = require("../middleware/auth");
 
 /** POST /add
  *
@@ -15,10 +15,10 @@ const Saved = require("../models/saved");
  *
  * Returns {"saved new tea": tea_id, "addedTo": WishList OR MyTea}
  *
- * Authorization required: same-user-as-:username
+ * Authorization required: ensureTeaOwner
  * */
 
-router.post("/add", async function (req, res, next) {
+router.post("/add", ensureTeaOwner, async function (req, res, next) {
   try {
     const { userId, teaId, isMyTea, isWishList } = req.body;
     await Saved.addToSavedTeas(userId, teaId, isMyTea, isWishList);
@@ -35,13 +35,13 @@ router.post("/add", async function (req, res, next) {
  *
  * Returns { "Tea with id#:": req.params.id, addedTo: "My Tea" }
  *
- * Authorization required: same-user-as-:username
+ * Authorization required: ensureTeaOwner
  * */
 
-router.patch("/switch/:id", async function (req, res, next) {
+router.patch("/switch/:teaId", ensureTeaOwner, async function (req, res, next) {
   try {
-    await Saved.wishListToMyTea(req.params.id);
-    return res.json({ "Tea with id#:": req.params.id, addedTo: "My Tea" });
+    await Saved.wishListToMyTea(req.params.teaId);
+    return res.json({ "Tea with id#:": req.params.teaId, addedTo: "My Tea" });
   } catch (err) {
     return next(err);
   }
@@ -53,16 +53,20 @@ router.patch("/switch/:id", async function (req, res, next) {
  *
  * must pass in the teaId, not the savedTea id.
  *
- * Authorization: EnsureOwnerOfTea(wishList or myTea)
+ * Authorization: ensureTeaOwner
  */
 
-router.delete("/delete/:id", async function (req, res, next) {
-  try {
-    await Saved.remove(req.params.id);
-    return res.json({ deleted: req.params.id });
-  } catch (err) {
-    return next(err);
+router.delete(
+  "/delete/:teaId",
+  ensureTeaOwner,
+  async function (req, res, next) {
+    try {
+      await Saved.remove(req.params.teaId);
+      return res.json({ deleted: req.params.teaId });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 module.exports = router;

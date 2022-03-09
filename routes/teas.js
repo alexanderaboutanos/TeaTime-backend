@@ -15,6 +15,28 @@ const teaEditSchema = require("../schemas/teaEdit.json");
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn, ensureTeaOwner } = require("../middleware/auth");
 
+/** GET /my-teas  =>  { [tea1, tea2...] }
+ *
+ * GET ALL MY TEAS
+ *
+ * returns an array of all my teas
+ *
+ *  where each tea is { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
+ *
+ * Authorization required: ensureLoggedIn
+ */
+
+router.get("/", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const { userId } = res.locals.user;
+    const { is_my_tea, is_wish_list } = req.body;
+    const myTeaArr = await Tea.findAll(userId, is_my_tea, is_wish_list);
+    return res.json({ myTeaArr });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /** GET /[id]  =>  { tea }
  *
  * GET TEA DATA

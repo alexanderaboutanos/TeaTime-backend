@@ -28,6 +28,40 @@ class Tea {
     return tea;
   }
 
+  /** Find all teas (myTeas or wishList).
+   *
+   * Returns [{ id, title, salary, equity, companyHandle, companyName }, ...]
+   * */
+
+  static async findAll(userId, isMyTea, isWishList) {
+    // ensure they are not the same value
+    if (isMyTea == isWishList) {
+      throw new BadRequestError(
+        "An tea must either be on the wish list or in myTeas!"
+      );
+    }
+
+    const filter = isMyTea ? "is_my_tea" : "is_on_wish_list";
+    let result = await db.query(
+      `SELECT t.id,
+              t.title, 
+              t.brand, 
+              t.description, 
+              t.category, 
+              t.review, 
+              t.country_of_origin, 
+              t.organic, 
+              t.img_url, 
+              t.brew_time, 
+              t.brew_temp
+              FROM teas t 
+              LEFT JOIN saved_teas AS s ON s.tea_id = t.id
+              WHERE ${filter} = TRUE 
+                AND user_id = ${userId}`
+    );
+    return result.rows;
+  }
+
   /**
    *
    * CREATE TEA

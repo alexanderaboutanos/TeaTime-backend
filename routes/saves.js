@@ -9,15 +9,6 @@ const Saved = require("../models/saved");
 
 // const ensureLoggedIn = require("../middleware/auth");
 
-/** PLAN
- *
- * deleteSavedTea(tea_id)
- *
- * editWishListToPersonal(tea_id)
- *
- *
- */
-
 /** POST /add
  *
  * Given a user_id, tea_id, and whether or not this will be added to WishList or to MyTea, add to the saved_teas DB.
@@ -38,6 +29,24 @@ router.post("/add", async function (req, res, next) {
   }
 });
 
+/** PATCH /switch
+ *
+ * Given a tea_id, move that tea from is_my_tea to is_on_wish_list
+ *
+ * Returns { "Tea with id#:": req.params.id, addedTo: "My Tea" }
+ *
+ * Authorization required: same-user-as-:username
+ * */
+
+router.patch("/switch/:id", async function (req, res, next) {
+  try {
+    await Saved.wishListToMyTea(req.params.id);
+    return res.json({ "Tea with id#:": req.params.id, addedTo: "My Tea" });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /** DELETE /[id]  =>  { deleted: id }
  *
  * DELETES SAVED TEA
@@ -48,7 +57,6 @@ router.post("/add", async function (req, res, next) {
  */
 
 router.delete("/delete/:id", async function (req, res, next) {
-  console.log(req.params.id);
   try {
     await Saved.remove(req.params.id);
     return res.json({ deleted: req.params.id });

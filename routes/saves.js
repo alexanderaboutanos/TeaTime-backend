@@ -38,4 +38,23 @@ router.post("/add", async function (req, res, next) {
   }
 });
 
+/** DELETE /[id]  =>  { deleted: id }
+ *
+ * DELETES SAVED TEA
+ *
+ * must pass in the teaId, not the savedTea id.
+ *
+ * Authorization: EnsureOwnerOfTea(wishList or myTea)
+ */
+
+router.delete("/delete/:id", async function (req, res, next) {
+  console.log(req.params.id);
+  try {
+    await Saved.remove(req.params.id);
+    return res.json({ deleted: req.params.id });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

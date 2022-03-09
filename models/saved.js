@@ -46,6 +46,29 @@ class Saved {
       [userId, teaId, isMyTea, isWishList]
     );
   }
+
+  /**
+   *
+   * DELETE SAVED TEA
+   *
+   * Delete relationship from database; returns undefined.
+   *
+   * Throws NotFoundError if saved_tea_relationship not found.
+   **/
+
+  static async remove(teaId) {
+    const result = await db.query(
+      `DELETE
+           FROM saved_teas
+           WHERE tea_id = $1
+           RETURNING id`,
+      [teaId]
+    );
+    const savedTea = result.rows[0];
+    if (!savedTea) {
+      throw new NotFoundError(`No saved tea with tea id#: ${Teaid}`);
+    }
+  }
 }
 
 module.exports = Saved;

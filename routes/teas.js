@@ -10,7 +10,6 @@ const Tea = require("../models/tea");
 const jsonschema = require("jsonschema");
 const teaNewSchema = require("../schemas/teaNew.json");
 // const teaUpdateSchema = require("../schemas/teaUpdate.json");
-// const teaSearchSchema = require("../schemas/teaSearch.json");
 
 const { BadRequestError } = require("../expressError");
 const ensureLoggedIn = require("../middleware/auth");
@@ -55,7 +54,6 @@ router.post("/new", async function (req, res, next) {
     }
 
     const tea = await Tea.create(req.body);
-    // STILL NEED TO ADD THIS TEA
     return res.status(201).json({ tea });
   } catch (err) {
     return next(err);

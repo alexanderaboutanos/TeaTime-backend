@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 const { BadRequestError, UnauthorizedError } = require("../expressError");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
-// User class has two methods: authenticate user, and register new user.
 class User {
   /** authenticate user with username, password.
    *
@@ -29,7 +28,6 @@ class User {
     );
 
     const user = result.rows[0];
-    user.teaIdArr = await User.getMyTeas(user.id);
 
     if (user) {
       // compare hashed password to a new hash from password
@@ -39,8 +37,6 @@ class User {
         return user;
       }
     }
-
-    // returns SQL data with array of teas.
 
     throw new UnauthorizedError("Invalid username/password");
   }
@@ -78,8 +74,6 @@ class User {
     );
 
     const user = result.rows[0];
-
-    user.teaIdArr = await User.getMyTeas(user.id);
 
     return user;
   }

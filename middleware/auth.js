@@ -3,6 +3,7 @@
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
+const User = require("../models/user");
 
 /** Middleware: Authenticate user.
  *
@@ -47,10 +48,11 @@ function ensureLoggedIn(req, res, next) {
  *  If not, raises Unauthorized.
  */
 
-function ensureTeaOwner(req, res, next) {
+async function ensureTeaOwner(req, res, next) {
   try {
     const user = res.locals.user;
     const teaId = req.body.teaId || req.params.teaId;
+    user.teaIdArr = await User.getMyTeas(user.userId);
     if (!(user && user.teaIdArr.indexOf(parseInt(teaId)) !== -1)) {
       throw new UnauthorizedError();
     }

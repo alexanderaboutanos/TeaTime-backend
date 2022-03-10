@@ -51,7 +51,7 @@ router.get("/wish-list", ensureLoggedIn, async function (req, res, next) {
   try {
     const { userId } = res.locals.user;
     const wishListArr = await Tea.findAll(userId, false, true);
-    return res.json({ withListArr });
+    return res.json({ wishListArr });
   } catch (err) {
     return next(err);
   }

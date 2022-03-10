@@ -7,6 +7,24 @@ const { BadRequestError, UnauthorizedError } = require("../expressError");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class User {
+  /** Given a userId, return data about user.
+   *
+   * Returns { userId, username, firstName, lastName }
+   *
+   * Throws NotFoundError if user not found.
+   **/
+
+  static async get(userId) {
+    const userRes = await db.query(
+      `SELECT *
+             FROM users
+             WHERE id = $1`,
+      [userId]
+    );
+    const user = userRes.rows[0];
+    return user;
+  }
+
   /** authenticate user with username, password.
    *
    * Returns { username, first_name, last_name }
@@ -77,6 +95,8 @@ class User {
 
     return user;
   }
+
+  /** Returns an array with all the teas that are on a user's wishList or 'myTea' folder. */
 
   static async getMyTeas(userId) {
     const result = await db.query(

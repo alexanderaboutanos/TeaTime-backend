@@ -7,9 +7,26 @@ const jsonschema = require("jsonschema");
 const User = require("../models/user");
 const userAuth = require("../schemas/userAuth.json");
 const userRegister = require("../schemas/userRegister.json");
+const { ensureLoggedIn } = require("../middleware/auth");
 
 const { createToken } = require("../helpers/tokens");
 const { BadRequestError } = require("../expressError");
+
+/** GET /auth  { userId } => { user }
+ *
+ * Returns { userId, username, firstName, lastName }
+ *
+ * Authorization required: ensureLoggedIn
+ */
+
+router.post("/auth", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const user = await User.get(res.locals.user.userId);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 /** POST /auth/token:  { username, password } => { token }
  *

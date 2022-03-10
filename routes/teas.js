@@ -26,12 +26,32 @@ const { ensureLoggedIn, ensureTeaOwner } = require("../middleware/auth");
  * Authorization required: ensureLoggedIn
  */
 
-router.get("/", ensureLoggedIn, async function (req, res, next) {
+router.get("/my-teas", ensureLoggedIn, async function (req, res, next) {
   try {
     const { userId } = res.locals.user;
-    const { is_my_tea, is_wish_list } = req.body;
-    const myTeaArr = await Tea.findAll(userId, is_my_tea, is_wish_list);
+    const myTeaArr = await Tea.findAll(userId, true, false);
     return res.json({ myTeaArr });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** GET /wish-list  =>  { [tea1, tea2...] }
+ *
+ * GET ALL TEAS ON WISH LIST
+ *
+ * returns an array of all the teas on my wish  List
+ *
+ *  where each tea is { title, brand, description, category, review, country_of_origin, organic, img_url, brew_time, brew_temp }
+ *
+ * Authorization required: ensureLoggedIn
+ */
+
+router.get("/wish-list", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const { userId } = res.locals.user;
+    const wishListArr = await Tea.findAll(userId, false, true);
+    return res.json({ withListArr });
   } catch (err) {
     return next(err);
   }

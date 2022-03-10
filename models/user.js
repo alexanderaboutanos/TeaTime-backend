@@ -16,7 +16,10 @@ class User {
 
   static async get(userId) {
     const userRes = await db.query(
-      `SELECT *
+      `SELECT id,
+              username,
+              first_name,
+              last_name
              FROM users
              WHERE id = $1`,
       [userId]

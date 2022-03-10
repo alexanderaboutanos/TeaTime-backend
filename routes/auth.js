@@ -19,7 +19,7 @@ const { BadRequestError } = require("../expressError");
  * Authorization required: ensureLoggedIn
  */
 
-router.post("/auth", ensureLoggedIn, async function (req, res, next) {
+router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     const user = await User.get(res.locals.user.userId);
     return res.json({ user });

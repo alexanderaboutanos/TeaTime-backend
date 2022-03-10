@@ -126,6 +126,7 @@ router.patch("/:teaId", ensureTeaOwner, async function (req, res, next) {
 router.delete("/:teaId", ensureTeaOwner, async function (req, res, next) {
   try {
     await Tea.remove(req.params.teaId);
+    // removes TeaRelationship as well?
     return res.json({ deleted: req.params.teaId });
   } catch (err) {
     return next(err);

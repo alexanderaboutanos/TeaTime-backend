@@ -31,7 +31,7 @@ router.post("/add", ensureTeaOwner, async function (req, res, next) {
 
 /** PATCH /switch
  *
- * Given a tea_id, move that tea from is_my_tea to is_on_wish_list
+ * Given a tea_id, move that tea from is_on_wish_list to is_my_tea.
  *
  * Returns { "Tea with id#:": req.params.id, addedTo: "My Tea" }
  *

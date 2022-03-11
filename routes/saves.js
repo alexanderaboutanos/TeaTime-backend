@@ -31,21 +31,49 @@ router.post("/add", ensureTeaOwner, async function (req, res, next) {
 
 /** PATCH /switch
  *
- * Given a tea_id, move that tea from is_on_wish_list to is_my_tea.
+ * Given a tea_id, move that tea from wishList to MyTea or vice versa.
  *
- * Returns { "Tea with id#:": req.params.id, addedTo: "My Tea" }
+ * Returns { "Switched tea with id#:": req.params.id}
  *
  * Authorization required: ensureTeaOwner
  * */
 
-router.patch("/switch/:teaId", ensureTeaOwner, async function (req, res, next) {
-  try {
-    await Saved.wishListToMyTea(req.params.teaId);
-    return res.json({ "Tea with id#:": req.params.teaId, addedTo: "My Tea" });
-  } catch (err) {
-    return next(err);
+router.patch(
+  "/to-my-teas/:teaId",
+  ensureTeaOwner,
+  async function (req, res, next) {
+    try {
+      console.log("router patch, /switch/:teaId", req.params.teaId);
+      await Saved.wishListToMyTea(req.params.teaId);
+      return res.json({ "Tea with id#:": req.params.teaId });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
+
+/** PATCH /switch
+ *
+ * Given a tea_id, move that tea from MyTeas to WishList.
+ *
+ * Returns { "Switched tea with id#:": req.params.id}
+ *
+ * Authorization required: ensureTeaOwner
+ * */
+
+router.patch(
+  "/to-wish-list/:teaId",
+  ensureTeaOwner,
+  async function (req, res, next) {
+    try {
+      console.log("router patch, switch/:teaId", req.params.teaId);
+      await Saved.myTeasToWishList(req.params.teaId);
+      return res.json({ "Tea with id#:": req.params.teaId });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 
 /** DELETE /[id]  =>  { deleted: id }
  *

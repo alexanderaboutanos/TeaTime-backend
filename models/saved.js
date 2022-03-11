@@ -69,6 +69,30 @@ class Saved {
       throw new NotFoundError(`No saved tea with tea id#: ${teaId}`);
     }
   }
+
+  /**
+   *
+   * SWITCH WISH LIST TO MYTEAS
+   *
+   * Changes saved_tea from isMyTea to wishList
+   *
+   * Throws NotFoundError if saved_tea_relationship not found.
+   **/
+
+  static async myTeasToWishList(teaId) {
+    const result = await db.query(
+      `UPDATE saved_teas
+           SET is_my_tea=FALSE, is_on_wish_list=TRUE
+           WHERE tea_id = $1
+           RETURNING id`,
+      [teaId]
+    );
+    const savedTea = result.rows[0];
+    if (!savedTea) {
+      throw new NotFoundError(`No saved tea with tea id#: ${teaId}`);
+    }
+  }
+
   /**
    *
    * DELETE SAVED TEA

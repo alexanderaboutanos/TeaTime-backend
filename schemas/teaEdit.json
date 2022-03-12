@@ -28,14 +28,14 @@
       "type": "boolean"
     },
     "img_url": {
-      "type": "string",
+      "type": ["string", "null"],
       "format": "uri"
     },
     "brew_time": {
-      "type": "integer"
+      "type": ["integer", "null"]
     },
     "brew_temp": {
-      "type": "integer"
+      "type": ["integer", "null"]
     }
   },
   "additionalProperties": false,

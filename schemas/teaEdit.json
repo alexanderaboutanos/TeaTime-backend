@@ -16,16 +16,16 @@
       "minLength": 1
     },
     "category": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "review": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "country_of_origin": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "organic": {
-      "type": "boolean"
+      "type": ["boolean", "null"]
     },
     "img_url": {
       "type": ["string", "null"],

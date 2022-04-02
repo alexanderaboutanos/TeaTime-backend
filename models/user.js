@@ -3,7 +3,11 @@
 const db = require("../db");
 const bcrypt = require("bcrypt");
 
-const { BadRequestError, UnauthorizedError } = require("../expressError");
+const {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+} = require("../expressError");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class User {
@@ -25,6 +29,7 @@ class User {
       [userId]
     );
     const user = userRes.rows[0];
+    if (!user) throw new NotFoundError(`No user: id#${userId}`);
     return user;
   }
 
